@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Misas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            max-width: 600px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<h2>Formulario de Registro de Misas</h2>
+
+<form id="formMisa">
+    <!-- Tipo de misa -->
+    <label for="tipoMisa">Tipo de Misa</label>
+    <select id="tipoMisa" name="tipoMisa" required>
+        <option value="">Seleccione</option>
+        <option value="dominical">Dominical</option>
+        <option value="particular">Particular</option>
+    </select>
+
+    <!-- Campos adicionales para misa particular -->
+    <div id="particularFields" class="hidden">
+        <label for="numRecibo">Número de Recibo</label>
+        <input type="text" id="numRecibo" name="numRecibo">
+
+        <label for="monto">Monto</label>
+        <input type="number" id="monto" name="monto" step="0.01">
+
+        <label for="contribuyente">Nombre del Contribuyente</label>
+        <input type="text" id="contribuyente" name="contribuyente">
+    </div>
+
+    <!-- Fecha -->
+    <label for="fecha">Fecha</label>
+    <input type="date" id="fecha" name="fecha" required>
+
+    <!-- Hora -->
+    <label for="hora">Hora</label>
+    <input type="time" id="hora" name="hora" required>
+
+    <!-- Intención de misa -->
+    <label for="intencion">Intención de Misa</label>
+    <select id="intencion" name="intencion" required>
+        <option value="">Seleccione</option>
+        <option value="Difunto">Por un difunto</option>
+        <option value="Salud">Por salud</option>
+        <option value="AccionGracias">Acción de gracias</option>
+        <!-- Aquí puedes agregar más opciones desde la BD -->
+    </select>
+
+    <!-- Detalle de misa -->
+    <label for="detalle">Detalle de la Misa</label>
+    <textarea id="detalle" name="detalle" rows="3"></textarea>
+
+    <!-- Ofrece -->
+    <label for="ofrece">Ofrecida por</label>
+    <input type="text" id="ofrece" name="ofrece">
+
+    <!-- Iglesia -->
+    <label for="iglesia">Iglesia</label>
+    <select id="iglesia" name="iglesia" required>
+        <option value="">Seleccione</option>
+        <option value="Parroquia San Juan">Parroquia San Juan</option>
+        <option value="Capilla Santa Rosa">Capilla Santa Rosa</option>
+        <!-- Aquí puedes cargar dinámicamente desde la BD -->
+    </select>
+
+    <br><br>
+    <button type="submit">Registrar Misa</button>
+</form>
+
+<script>
+    const tipoMisa = document.getElementById('tipoMisa');
+    const particularFields = document.getElementById('particularFields');
+
+    tipoMisa.addEventListener('change', () => {
+        if (tipoMisa.value === 'particular') {
+            particularFields.classList.remove('hidden');
+        } else {
+            particularFields.classList.add('hidden');
+        }
+    });
+</script>
+
+</body>
+</html>

@@ -12,7 +12,7 @@ def index():
         cursor.execute("""select * from vta_plantas_activas order by nombreCientifico asc""")
         rows = cursor.fetchall()
         resultado = [{'idPlanta': r[0], 'nombreCientifico': r[1], 'linkImagen': r[2], 'nomFamilia': r[3], 'nombres_comunes': r[4] or ''} for r in rows]
-        return render_template('visualizar_plantas.html', plantas=resultado)
+        return render_template('registrobautizo.html', plantas=resultado)
     except Exception as e:
         return jsonify({'error': str(e)}), 500
     finally:
