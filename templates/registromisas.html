@@ -1,107 +1,347 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
-    <title>Registro de Misas</title>
+    <title>Registro de Misa</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
-        }
-        form {
-            max-width: 600px;
-        }
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-        input, select, textarea {
-            width: 100%;
-            padding: 6px;
-            margin-top: 4px;
-        }
-        .hidden {
+        .recibo-section {
             display: none;
+            margin-top: 15px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            background-color: #f8f9fa;
         }
     </style>
+
+    <script>
+        function toggleRecibo() {
+            const checkbox = document.getElementById("registrarRecibo");
+            const reciboSection = document.getElementById("reciboSection");
+            reciboSection.style.display = checkbox.checked ? "block" : "none";
+        }
+
+        function obtenerHora24() {
+            const hora = parseInt(document.getElementById('hora_12').value);
+            const ampm = document.getElementById('ampm').value;
+
+            if (isNaN(hora) || !ampm) return null;
+
+            let hora24 = hora;
+
+            if (ampm === 'AM') {
+                if (hora === 12) hora24 = 0;
+            } else if (ampm === 'PM') {
+                if (hora !== 12) hora24 = hora + 12;
+            }
+
+            return `${hora24.toString().padStart(2, '0')}:00`;
+        }
+
+        function validarDominical() {
+            const tipoMisa = document.getElementById("idtipomisas");
+            const selectedText = tipoMisa.options[tipoMisa.selectedIndex].text.toLowerCase();
+            const esDominical = selectedText.includes("dominical");
+
+            const container = document.getElementById("hora_misa_container");
+
+            if (esDominical) {
+                // Reemplazar por solo opciones válidas: 07:00 AM, 10:00 AM, 07:00 PM
+                container.innerHTML = `
+        <div class="row" id="hora_misa_dominical">
+            <div class="col-md-12">
+                <label for="hora_12" class="form-label">Hora</label>
+                <select id="hora_12" class="form-select" onchange="sincronizarHoraMisa()" required>
+                    <option value="">Seleccione hora</option>
+                    <option value="07:00-AM">07:00 AM</option>
+                    <option value="10:00-AM">10:00 AM</option>
+                    <option value="07:00-PM">07:00 PM</option>
+                </select>
+                <input type="hidden" id="hora_misa" name="hora_misa">
+            </div>
+        </div>
+        `;
+            } else {
+                // Restaurar select completo para horario libre
+                container.innerHTML = `
+        <div class="row">
+            <div class="col-md-4">
+                <label for="hora_12" class="form-label">Hora</label>
+                <select id="hora_12" class="form-select" onchange="sincronizarHoraMisa()" required>
+                    <option value="">Hora</option>
+                    ${[...Array(12).keys()].map(i => {
+                    const val = (i + 1).toString().padStart(2, '0');
+                    return `<option value="${val}">${val}</option>`;
+                }).join("")}
+                </select>
+            </div>
+            <div class="col-md-4 d-none">
+                <label class="form-label" type="hidden">Minutos</label>
+                <select id="minutos_12" class="form-select" disabled>
+                    <option value="00">00</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="ampm" class="form-label">AM/PM</label>
+                <select id="ampm" class="form-select" onchange="sincronizarHoraMisa()" required>
+                    <option value="">Seleccione</option>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+            <input type="hidden" id="hora_misa" name="hora_misa">
+        </div>
+        `;
+            }
+        }
+
+        function sincronizarHoraMisa() {
+            const hiddenInput = document.getElementById('hora_misa');
+
+            const hora12 = document.getElementById('hora_12');
+            const ampm = document.getElementById('ampm');
+
+            // Si estamos en el modo restringido
+            if (!ampm) {
+                const valor = hora12.value;
+                if (valor) {
+                    const [hora, periodo] = valor.split("-");
+                    let hora24 = parseInt(hora);
+                    if (periodo === "AM") {
+                        if (hora24 === 12) hora24 = 0;
+                    } else {
+                        if (hora24 !== 12) hora24 += 12;
+                    }
+                    hiddenInput.value = hora24.toString().padStart(2, '0') + ":00";
+                } else {
+                    hiddenInput.value = "";
+                }
+            } else {
+                // Modo libre
+                const hora = parseInt(hora12.value);
+                const periodo = ampm.value;
+
+                if (!isNaN(hora) && periodo) {
+                    let hora24 = hora;
+                    if (periodo === "AM") {
+                        if (hora === 12) hora24 = 0;
+                    } else {
+                        if (hora !== 12) hora24 += 12;
+                    }
+                    hiddenInput.value = hora24.toString().padStart(2, '0') + ":00";
+                } else {
+                    hiddenInput.value = "";
+                }
+            }
+            console.log("Hora: ",hiddenInput.value);
+            
+        }
+
+    </script>
 </head>
-<body>
 
-<h2>Formulario de Registro de Misas</h2>
+<body class="bg-light" onload="validarDominical()">
 
-<form id="formMisa">
-    <!-- Tipo de misa -->
-    <label for="tipoMisa">Tipo de Misa</label>
-    <select id="tipoMisa" name="tipoMisa" required>
-        <option value="">Seleccione</option>
-        <option value="dominical">Dominical</option>
-        <option value="particular">Particular</option>
-    </select>
+    <div class="container mt-5">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Registrar Misa</h4>
+            </div>
+            <div class="card-body">
+                <!-- <form id="misaForm" enctype="multipart/form-data" method="POST" class="needs-validation" novalidate></form>-->
+                <form action="/registrar_misas" method="POST">
 
-    <!-- Campos adicionales para misa particular -->
-    <div id="particularFields" class="hidden">
-        <label for="numRecibo">Número de Recibo</label>
-        <input type="text" id="numRecibo" name="numRecibo">
+                    <!-- Iglesia -->
+                    <div class="mb-3">
+                        <label for="idiglesias" class="form-label">Iglesia</label>
+                        <select class="form-select" id="idiglesias" name="idiglesias" required>
+                            <option value="">Seleccione una iglesia</option>
+                            {% for iglesia in iglesias %}
+                            <option value="{{ iglesia.idiglesias }}">{{ iglesia.nomIglesia }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-        <label for="monto">Monto</label>
-        <input type="number" id="monto" name="monto" step="0.01">
+                    <!-- Tipo de misa -->
+                    <div class="mb-3">
+                        <label for="idtipomisas" class="form-label">Tipo de misa</label>
+                        <select class="form-select" id="idtipomisas" name="idtipomisas" onchange="validarDominical()"
+                            required>
+                            {% for tipo in tipomisas %}
+                            <option value="{{ tipo.idtipomisas }}">{{ tipo.tipomisas }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-        <label for="contribuyente">Nombre del Contribuyente</label>
-        <input type="text" id="contribuyente" name="contribuyente">
+                    <!-- Intención -->
+                    <div class="mb-3">
+                        <label for="idintencionesmisa" class="form-label">Intención de misa</label>
+                        <select class="form-select" id="idintencionesmisa" name="idintencionesmisa" required>
+                            {% for intencion in intenciones %}
+                            <option value="{{ intencion.idintencionesmisa }}">{{ intencion.intencion }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Fecha y hora -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <label for="fecha_misa" class="form-label">Fecha de misa</label>
+                            <input type="date" class="form-control" id="fecha_misa" name="fecha_misa" required>
+                        </div>
+                        <div class="row" id="hora_misa_container">
+                            <input type="hidden" id="hora_misa" name="hora_misa">
+                            <!-- Selector de hora -->
+                            <div class="col-md-4">
+                                <label for="hora_12" class="form-label">Hora</label>
+                                <select id="hora_12" class="form-select" required>
+                                    <option value="">Hora</option>
+                                    {% for h in range(1, 13) %}
+                                    <option value="{{ " %02d"|format(h) }}">{{ "%02d"|format(h) }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <!-- Minutos fijos (00) -->
+                            <div class="col-md-4 d-none">
+                                <label class="form-label">Minutos</label>
+                                <select id="minutos_12" class="form-select" disabled>
+                                    <option value="00">00</option>
+                                </select>
+                            </div>
+
+                            <!-- AM/PM -->
+                            <div class="col-md-4">
+                                <label for="ampm" class="form-label">AM/PM</label>
+                                <select id="ampm" class="form-select" required>
+                                    <option value="">Seleccione</option>
+                                    <option value="AM">AM</option>
+                                    <option value="PM">PM</option>
+                                </select>
+                            </div>
+
+
+                        </div>
+                    </div>
+
+                    
+                    <div class="mb-3">
+                        <label for="ofrece" class="form-label">Ofrecida por</label>
+                        <input type="text" class="form-control" id="ofrece" name="ofrece" maxlength="150" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="detalle" class="form-label">Detalle</label>
+                        <textarea class="form-control" id="detalle" name="detalle" maxlength="150" rows="2"></textarea>
+                    </div>
+
+
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="registrarRecibo" name="registrarRecibo"
+                            onclick="toggleRecibo()">
+                        <label class="form-check-label" for="registrarRecibo">Registrar recibo</label>
+                    </div>
+
+                    <div id="reciboSection" class="recibo-section">
+                        <h5>Datos del Recibo</h5>
+                        <div class="mb-3">
+                            <label for="nrorecibo" class="form-label">Nro. Recibo</label>
+                            <input type="text" class="form-control" id="nrorecibo" name="nrorecibo" maxlength="20">
+                        </div>
+                        <div class="mb-3">
+                            <label for="contribuyente" class="form-label">Contribuyente</label>
+                            <input type="text" class="form-control" id="contribuyente" name="contribuyente"
+                                maxlength="100">
+                        </div>
+                        <div class="mb-3">
+                            <label for="monto" class="form-label">Monto (S/)</label>
+                            <input type="number" class="form-control" id="monto" name="monto" step="0.01" min="0">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-success">Registrar Misa</button>
+                    </div>
+                </form>
+                <p id="mensaje" class="mt-3 text-center text-success">Mensaje: {{ mensaje if mensaje }}</p>
+            </div>
+        </div>
     </div>
 
-    <!-- Fecha -->
-    <label for="fecha">Fecha</label>
-    <input type="date" id="fecha" name="fecha" required>
-
-    <!-- Hora -->
-    <label for="hora">Hora</label>
-    <input type="time" id="hora" name="hora" required>
-
-    <!-- Intención de misa -->
-    <label for="intencion">Intención de Misa</label>
-    <select id="intencion" name="intencion" required>
-        <option value="">Seleccione</option>
-        <option value="Difunto">Por un difunto</option>
-        <option value="Salud">Por salud</option>
-        <option value="AccionGracias">Acción de gracias</option>
-        <!-- Aquí puedes agregar más opciones desde la BD -->
-    </select>
-
-    <!-- Detalle de misa -->
-    <label for="detalle">Detalle de la Misa</label>
-    <textarea id="detalle" name="detalle" rows="3"></textarea>
-
-    <!-- Ofrece -->
-    <label for="ofrece">Ofrecida por</label>
-    <input type="text" id="ofrece" name="ofrece">
-
-    <!-- Iglesia -->
-    <label for="iglesia">Iglesia</label>
-    <select id="iglesia" name="iglesia" required>
-        <option value="">Seleccione</option>
-        <option value="Parroquia San Juan">Parroquia San Juan</option>
-        <option value="Capilla Santa Rosa">Capilla Santa Rosa</option>
-        <!-- Aquí puedes cargar dinámicamente desde la BD -->
-    </select>
-
-    <br><br>
-    <button type="submit">Registrar Misa</button>
-</form>
-
+    <!-- Bootstrap JS (opcional si no usas JS de Bootstrap) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Modal -->
+<div class="modal fade" id="mensajeModal" tabindex="-1" aria-labelledby="mensajeModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="mensajeModalLabel">Resultado del registro</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="mensajeContenido">
+        <!-- Aquí se colocará el mensaje -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="cerrarModal()">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
 <script>
-    const tipoMisa = document.getElementById('tipoMisa');
-    const particularFields = document.getElementById('particularFields');
+let fueExito = false; // Guarda si fue exitoso o no
 
-    tipoMisa.addEventListener('change', () => {
-        if (tipoMisa.value === 'particular') {
-            particularFields.classList.remove('hidden');
-        } else {
-            particularFields.classList.add('hidden');
+document.querySelector("form").addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+
+    try {
+        const response = await fetch(form.action, {
+            method: "POST",
+            headers: {
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: formData
+        });
+
+        const data = await response.json();
+
+        const mensajeContenido = document.getElementById("mensajeContenido");
+        mensajeContenido.textContent = data.mensaje || "No se recibió mensaje.";
+
+        // Detectamos si fue exitoso o no
+        fueExito = !data.mensaje.includes("❌");
+
+        const modal = new bootstrap.Modal(document.getElementById("mensajeModal"));
+        modal.show();
+
+        if (fueExito) {
+            form.reset();
+            toggleRecibo();
         }
-    });
+    } catch (error) {
+        alert("Ocurrió un error al registrar: " + error.message);
+        fueExito = false;
+    }
+});
+
+// Función que se ejecutará al cerrar el modal
+function cerrarModal() {
+    if (fueExito) {
+        // Redirigir, recargar o mostrar otra cosa
+        window.location.href = "/misas_por_fecha";  // Cambia esto según tu lógica
+        // o simplemente actualizar parte de la interfaz
+        // location.reload();  // Si deseas recargar
+    } else {
+        const modal = bootstrap.Modal.getInstance(document.getElementById("mensajeModal"));
+        modal.hide();  // Solo cerrar el modal
+    }
+}
 </script>
 
 </body>
+
 </html>

@@ -1,17 +1,9 @@
-from flask import Flask
+from flask import Flask, redirect, url_for
 from flask_cors import CORS
 from flask import session
 
 from config.db import verificar_base_datos_rostros
-from controllers.face_controller import face_bp
-from controllers.user_controller import user_bp
-from controllers.planta_visulizador import visualizacion_bp
-from controllers.gestionPlantas.registro_planta import registro_bp
-from controllers.planta_identificacion import identificacion_bp
-from controllers.planta_detalles import detalles_bp
-from controllers.gestionPlantas.registro_zona import registro_zona
-from controllers.gestionPlantas.registro_saberes import registro_saberes
-from controllers.gestionPlantas.registro_usos import registro_usos
+from controllers.registro_misas import registromisas_bp
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -20,18 +12,13 @@ CORS(app)
 def inject_user():
     return dict(user=session.get('usuario'))
 # Registrar blueprints
-app.register_blueprint(face_bp)
-app.register_blueprint(user_bp)
-app.register_blueprint(visualizacion_bp)
-app.register_blueprint(registro_bp)
-app.register_blueprint(identificacion_bp)
-app.register_blueprint(detalles_bp)
+app.register_blueprint(registromisas_bp)
 
 #----
-app.register_blueprint(registro_zona)
-app.register_blueprint(registro_saberes)
-app.register_blueprint(registro_usos)
-#----
+
+@app.route('/')
+def home():
+    return redirect(url_for('registromisas_bp.misas_por_fecha'))
 
 if __name__ == '__main__':
     if verificar_base_datos_rostros():
