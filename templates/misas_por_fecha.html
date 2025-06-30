@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Misas por Fecha</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <a href="/registrar_misas" class="btn btn-primary">Registrar Nueva Misa</a>
+    <form class="d-flex align-items-center" method="GET" action="/misas_por_fecha">
+      <input type="date" name="fecha" class="form-control me-2" value="{{ fecha }}">
+      <button type="submit" class="btn btn-outline-secondary">Ir</button>
+    </form>
+  </div>
+
+  <div class="text-center mb-3">
+    <a href="/misas_por_fecha?fecha={{ anterior }}" class="btn btn-sm btn-outline-dark">&larr; Día anterior</a>
+    <span class="mx-3 fs-5">{{ fecha.strftime('%A, %d de %B de %Y') }}</span>
+    <a href="/misas_por_fecha?fecha={{ siguiente }}" class="btn btn-sm btn-outline-dark">Día siguiente &rarr;</a>
+  </div>
+
+  {% if misas %}
+  <div class="table-responsive shadow-sm">
+    <table class="table table-bordered table-hover text-center align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Hora</th>
+          <th>Iglesia</th>
+          <th>Tipo</th>
+          <th>Intención</th>
+          <th>Ofrecida por</th>
+          <th>Detalle</th>
+          <th>Recibo</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for misa in misas %}
+        <tr>
+          <td>{{ misa.hora }}</td>
+          <td>{{ misa.iglesia }}</td>
+          <td>{{ misa.tipo_misa }}</td>
+          <td>{{ misa.intencion_misa }}</td>
+          <td>{{ misa.ofrecida_por }}</td>
+          <td>{{ misa.detalle or '' }}</td>
+          <td>
+            {% if misa.idreciboMisas %}
+              <button class="btn btn-sm btn-info" data-bs-toggle="modal"
+                      data-bs-target="#modalRecibo{{ misa.idmisas }}">Ver</button>
+            {% else %}
+              <button class="btn btn-sm btn-secondary" data-bs-toggle="modal"
+                      data-bs-target="#modalRegistrarRecibo{{ misa.idmisas }}">Registrar</button>
+            {% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+    <div class="alert alert-warning text-center">
+      No hay misas registradas para esta fecha.
+    </div>
+  {% endif %}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
