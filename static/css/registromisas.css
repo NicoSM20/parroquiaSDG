@@ -1,0 +1,94 @@
+/* Sección de recibo */
+.recibo-section {
+    display: none;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ced4da;
+    border-radius: 15px;
+    background: linear-gradient(to bottom right, #ffffff, #f1f3f5);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease-in-out;
+}
+
+/* Tarjeta principal */
+.card {
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* Encabezado de la tarjeta */
+.card-header {
+    background: linear-gradient(90deg, #0d6efd, #6610f2);
+    color: #fff;
+    padding: 20px 25px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Botón principal */
+.btn-success {
+    padding: 12px 30px;
+    font-size: 1.1rem;
+    border-radius: 12px;
+    transition: background 0.3s ease-in-out;
+}
+.btn-success:hover {
+    background-color: #198754;
+}
+
+/* Labels bonitos */
+.form-label {
+    font-weight: 600;
+    color: #333;
+}
+
+/* Inputs mejorados */
+.form-control, .form-select {
+    border-radius: 10px;
+    border: 1px solid #ced4da;
+    transition: all 0.2s ease-in-out;
+}
+.form-control:focus, .form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.25);
+}
+
+/* Checkbox bonito */
+.form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+}
+
+/* Modal personalizado */
+.modal-content {
+    border-radius: 16px;
+    padding: 10px;
+}
+.modal-header {
+    background-color: #0d6efd;
+    color: white;
+    border-bottom: 0;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+}
+.modal-footer {
+    border-top: 0;
+}
+
+/* Mensaje al pie del formulario */
+#mensaje {
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+/* Responsive: aseguramos buen comportamiento en móviles */
+@media (max-width: 768px) {
+    .card-header h4 {
+        font-size: 1.25rem;
+    }
+
+    .btn-success {
+        width: 100%;
+    }
+}
