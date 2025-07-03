@@ -55,6 +55,86 @@
             {% endif %}
           </td>
         </tr>
+        <!-- Modal REGISTRAR RECIBO -->
+         <!-- Modal VER RECIBO -->
+{% if misa.idreciboMisas %}
+<div class="modal fade" id="modalRecibo{{ misa.idmisas }}" tabindex="-1"
+     aria-labelledby="modalReciboLabel{{ misa.idmisas }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalReciboLabel{{ misa.idmisas }}">Datos del Recibo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Nro. Recibo:</strong> {{ misa.nrorecibo }}</p>
+        <p><strong>Contribuyente:</strong> {{ misa.contribuyente }}</p>
+        <p><strong>Monto (S/):</strong> {{ misa.monto }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+{% if not misa.idreciboMisas %}
+<div class="modal fade" id="modalRegistrarRecibo{{ misa.idmisas }}" tabindex="-1"
+     aria-labelledby="modalRegistrarReciboLabel{{ misa.idmisas }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="POST" action="/registrar_recibo/{{ misa.idmisas }}">
+        <div class="modal-header bg-secondary text-white">
+          <h5 class="modal-title" id="modalRegistrarReciboLabel{{ misa.idmisas }}">Registrar Recibo</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="nrorecibo{{ misa.idmisas }}" class="form-label">Nro. Recibo</label>
+            <input type="text" class="form-control" name="nrorecibo" id="nrorecibo{{ misa.idmisas }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="contribuyente{{ misa.idmisas }}" class="form-label">Contribuyente</label>
+            <input type="text" class="form-control" name="contribuyente" id="contribuyente{{ misa.idmisas }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="monto{{ misa.idmisas }}" class="form-label">Monto (S/)</label>
+            <input type="number" step="0.01" min="0" class="form-control" name="monto" id="monto{{ misa.idmisas }}" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success">Registrar</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+        <!-- Modal VER RECIBO -->
+{% if misa.idreciboMisas %}
+<div class="modal fade" id="modalRecibo{{ misa.idmisas }}" tabindex="-1"
+     aria-labelledby="modalReciboLabel{{ misa.idmisas }}" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title" id="modalReciboLabel{{ misa.idmisas }}">Datos del Recibo</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body">
+        <p><strong>Nro. Recibo:</strong> {{ misa.nrorecibo }}</p>
+        <p><strong>Contribuyente:</strong> {{ misa.contribuyente }}</p>
+        <p><strong>Monto (S/):</strong> {{ misa.monto }}</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
         {% endfor %}
       </tbody>
     </table>
