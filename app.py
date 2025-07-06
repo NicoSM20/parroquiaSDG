@@ -4,6 +4,8 @@ from flask import session
 
 from config.db import verificar_base_datos_rostros
 from controllers.registro_misas import registromisas_bp
+from controllers.registro_bautizos import registro_bautizos_bp
+
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -13,6 +15,7 @@ def inject_user():
     return dict(user=session.get('usuario'))
 # Registrar blueprints
 app.register_blueprint(registromisas_bp)
+app.register_blueprint(registro_bautizos_bp)
 
 #----
 
