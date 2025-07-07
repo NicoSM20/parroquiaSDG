@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Registrar Matrimonio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/matrimonios.css') }}">
+</head>
+
+<body>
+
+    <h2>Registro de Matrimonio</h2>
+
+    <form id="form-matrimonio">
+        <label>Nro Partida Matrimonio</label>
+        <input type="text" name="nroPartidaMatrimonio" required />
+
+        <div class="row">
+            <div>
+                <label>Fecha del Matrimonio</label>
+                <input type="date" name="fechaMatrimonio" required />
+            </div>
+            <div>
+                <label>Año Parroquial</label>
+                <select id="añoparroquial" name="añoparroquial" required>
+                    <option value="">Seleccione</option>
+                    {% for añoparr in añosparr %}
+                    <option value="{{ añoparr.idAniosParroquial }}">{{ añoparr.nomAnioParroquial }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <div class="row">
+            <div>
+                <label>Iglesia</label>
+                <select id="iglesia" name="iglesia" required>
+                    <option value="">Seleccione Iglesia</option>
+                    {% for iglesia in iglesias %}
+                    <option value="{{ iglesia.idiglesias }}">{{ iglesia.nomIglesia }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label>Sacerdote</label>
+                <select id="sacerdote" name="sacerdote" required>
+                    <option value="">Seleccione Sacerdote</option>
+                    {% for sacerdote in sacerdotes %}
+                    <option value="{{ sacerdote.idsacerdotes }}">{{ sacerdote.nom }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <hr />
+
+        <!-- CONTRAYENTES -->
+        <h3>Contrayentes</h3>
+        <div class="row">
+            <div>
+                <label>DNI del Esposo</label>
+                <input type="text" id="dniEsposo" name="dniEsposo" class="dni-input" placeholder="Ingrese DNI y presione Enter" required />
+
+                <label>Esposo</label>
+                <input type="text" id="nombreEsposo" disabled />
+                <input type="hidden" id="idEsposo" name="idEsposo" />
+
+                <label>Estado civil del esposo</label>
+                <select id="estadocivilesposo" name="estadocivilesposo" required>
+                    <option value="">Seleccione</option>
+                    {% for estado in estadosciviles %}
+                    <option value="{{ estado.idestadosciviles }}">{{ estado.estado }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label>DNI de la Esposa</label>
+                <input type="text" id="dniEsposa" name="dniEsposa" class="dni-input" placeholder="Ingrese DNI y presione Enter" required />
+
+                <label>Esposa</label>
+                <input type="text" id="nombreEsposa" disabled />
+                <input type="hidden" id="idEsposa" name="idEsposa" />
+
+                <label>Estado civil de la esposa</label>
+                <select id="estadocivilesposa" name="estadocivilesposa" required>
+                    <option value="">Seleccione</option>
+                    {% for estado in estadosciviles %}
+                    <option value="{{ estado.idestadosciviles }}">{{ estado.estado }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+
+        <!-- PADRINOS -->
+        <h3>Padrinos</h3>
+        <div class="row">
+            <div>
+                <label>DNI del Padrino 1</label>
+                <input type="text" id="dniPadrino1" name="dniPadrino1" class="dni-input" placeholder="DNI del padrino 1 y presione Enter" />
+                <label>Padrino 1</label>
+                <input type="text" id="nombrePadrino1" disabled />
+                <input type="hidden" id="idPadrino1" name="idPadrino1" />
+            </div>
+            <div>
+                <label>DNI del Padrino 2</label>
+                <input type="text" id="dniPadrino2" name="dniPadrino2" class="dni-input" placeholder="DNI del padrino 2 y presione Enter" />
+                <label>Padrino 2</label>
+                <input type="text" id="nombrePadrino2" disabled />
+                <input type="hidden" id="idPadrino2" name="idPadrino2" />
+            </div>
+        </div>
+
+        <!-- TESTIGOS -->
+        <h3>Testigos</h3>
+        <div class="row">
+            <div>
+                <label>DNI del Testigo 1</label>
+                <input type="text" id="dniTestigo1" name="dniTestigo1" class="dni-input" placeholder="DNI del testigo 1 y presione Enter" />
+                <label>Testigo 1</label>
+                <input type="text" id="nombreTestigo1" disabled />
+                <input type="hidden" id="idTestigo1" name="idTestigo1" />
+            </div>
+            <div>
+                <label>DNI del Testigo 2</label>
+                <input type="text" id="dniTestigo2" name="dniTestigo2" class="dni-input" placeholder="DNI del testigo 2 y presione Enter" />
+                <label>Testigo 2</label>
+                <input type="text" id="nombreTestigo2" disabled />
+                <input type="hidden" id="idTestigo2" name="idTestigo2" />
+            </div>
+        </div>
+
+        <button type="submit">Registrar Matrimonio</button>
+    </form>
+
+    <!-- Modal para registrar nueva persona -->
+    <div id="modalPersona" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="cerrarModal()">&times;</span>
+                Registrar Nueva Persona
+            </div>
+            <label for="dniNuevo">DNI</label>
+            <input type="text" id="dniNuevo" />
+
+            <label for="nombres">Nombres</label>
+            <input type="text" id="nombres" />
+
+            <label for="apellido1">Apellido Paterno</label>
+            <input type="text" id="apellido1" />
+
+            <label for="apellido2">Apellido Materno</label>
+            <input type="text" id="apellido2" />
+
+            <label for="genero">Género</label>
+            <select id="genero">
+                <option value="">Seleccione</option>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+            </select>
+
+            <br /><br />
+            <button type="button" onclick="guardarPersona()">Guardar Persona</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/matrimonios.js') }}"></script>
+</body>
+
+</html>
