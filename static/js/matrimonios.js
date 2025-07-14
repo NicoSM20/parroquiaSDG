@@ -47,51 +47,71 @@ async function guardarPersona() {
 }
 
 // Buscar persona en BD al presionar Enter en campos de DNI
-document.querySelectorAll('input.dni-input').forEach(input => {
-  input.addEventListener('keydown', async function (e) {
-    if (e.key === 'Enter') {
+
+
+
+
+["dniEsposo", "dniEsposa"].forEach((idCampoDni) => {
+  const input = document.getElementById(idCampoDni);
+  const ruta = idCampoDni === "dniEsposo" ? "/buscar_persona_esposo" : "/buscar_persona_esposa";
+
+  input.addEventListener("keydown", async function (e) {
+    if (e.key === "Enter") {
       e.preventDefault();
       const dni = this.value.trim();
-      const campo = this.id;
-
+      console.log(dni);
       if (dni.length !== 8) {
         alert("⚠️ DNI debe tener 8 dígitos");
         return;
       }
 
-      const res = await fetch("/buscar_persona_por_dni", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ dni })
-      });
+      try {
+        const res = await fetch(ruta, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ dni })
+        });
 
-      const data = await res.json();
+        const data = await res.json();
+        const base = idCampoDni.replace("dni", "");
+        console.log(base);
+        console.log(data);
 
-      const nombreCampo = campo.replace("dni", "nombre");
-      const idCampo = campo.replace("dni", "id");
+        if (data.existe) {
+          document.getElementById("nombre" + base).value = data.nombre;
+          document.getElementById("id" + base).value = data.id;
 
-      if (data.existe) {
-        // ✅ Mostrar el nombre completo en el input deshabilitado
-        document.getElementById(nombreCampo).value = data.nombre;
-        document.getElementById(idCampo).value = data.id;
-      } else {
-        abrirModal(campo);
+          // Padre/Madre si vienen
+          if (data.nombre_padre)
+            document.getElementById("nombrePadre" + base).value = data.nombre_padre;
+          if (data.nombre_madre)
+            document.getElementById("nombreMadre" + base).value = data.nombre_madre;
+
+          // Estado civil si lo quieres autoseleccionar
+          document.getElementById("estadocivil" + base).value = data.estado_civil;
+
+        } else {
+          abrirModal(idCampoDni);  // Aquí puedes abrir modal para registrar persona
+        }
+
+      } catch (err) {
+        console.error("Error al buscar persona:", err);
+        alert("Error al buscar persona.");
       }
     }
   });
 
-  input.addEventListener('input', function () {
-    const campo = this.id;
-    const nombreCampo = campo.replace("dni", "nombre");
-    const idCampo = campo.replace("dni", "id");
-
+  // Limpiar campos si se cambia el DNI a menos de 8
+  input.addEventListener("input", function () {
+    const base = idCampoDni.replace("dni", "");
     if (this.value.trim().length < 8) {
-      const inputNombre = document.getElementById(nombreCampo);
-      const inputId = document.getElementById(idCampo);
-      if (inputNombre) inputNombre.value = "";
-      if (inputId) inputId.value = "";
+      const campos = ["nombre", "id", "nombrePadre", "nombreMadre"];
+      campos.forEach(c => {
+        const el = document.getElementById(c + base);
+        if (el) el.value = "";
+      });
     }
   });
 });

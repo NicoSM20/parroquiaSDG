@@ -31,7 +31,7 @@ def formatear_fecha_es(fecha):
 
 @app.route('/')
 def home():
-    return redirect(url_for('registromatrimonios_bp.registro_matrimonios'))
+    return redirect(url_for('registromisas_bp.misas_por_fecha'))
 
 if __name__ == '__main__':
     if verificar_base_datos_rostros():

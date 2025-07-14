@@ -128,10 +128,9 @@ function sincronizarHoraMisa() {
 }
 function cerrarModal() {
   if (fueExito) {
-    // Redirigir, recargar o mostrar otra cosa
-    window.location.href = "/misas_por_fecha"; // Cambia esto según tu lógica
-    // o simplemente actualizar parte de la interfaz
-    // location.reload();  // Si deseas recargar
+
+    const fecha = document.getElementById("fecha_misa").value;
+      window.location.href = `/misas_por_fecha?fecha=${fecha}`;
   } else {
     const modal = bootstrap.Modal.getInstance(
       document.getElementById("mensajeModal")
@@ -169,10 +168,7 @@ document.querySelector("form").addEventListener("submit", async function (e) {
     const modal = new bootstrap.Modal(document.getElementById("mensajeModal"));
     modal.show();
 
-    if (fueExito) {
-      form.reset();
-      toggleRecibo();
-    }
+    
   } catch (error) {
     alert("Ocurrió un error al registrar: " + error.message);
     fueExito = false;

@@ -30,6 +30,8 @@ def registro_matrimonios():
         sacerdotes = cursor.fetchall()
         cursor.execute("select * from estadosciviles;")
         estadosciviles = cursor.fetchall()
+        cursor.execute("select * from generos;")
+        generos = cursor.fetchall()
     finally:
         cursor.close()
         conn.close()
@@ -93,7 +95,8 @@ def registro_matrimonios():
                            iglesias=iglesias, 
                            añosparr=añosparr,
                            sacerdotes=sacerdotes, 
-                           estadosciviles=estadosciviles)
+                           estadosciviles=estadosciviles,
+                           generos=generos)
 @registromatrimonios_bp.route("/buscar_persona_por_dni", methods=["POST"])
 def buscar_persona_por_dni():
     dni = request.json.get("dni")
@@ -118,6 +121,43 @@ def buscar_persona_por_dni():
     finally:
         cursor.close()
         conn.close()
+        
+@registromatrimonios_bp.route("/buscar_persona_esposo", methods=["POST"])
+def buscar_persona_esposo():
+    dni = request.json.get("dni")
+    print(f"DNI recibido: {dni}")
+    try:
+        conn = get_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.callproc("buscar_persona_esposo", [dni])
+        
+        # 👇 Aquí recuperas el resultado del procedimiento
+        for result in cursor.stored_results():
+            persona = result.fetchone()
+            print("Resultado desde SP:", persona)
+            if persona:
+                return jsonify({
+                    "existe": True,
+                    "id": persona["idpersonas"],
+                    "nombre": persona["nombre_completo"],
+                    "estado_civil": persona.get("estado_civil"),
+                    "genero": persona.get("genero"),
+                    "id_padre": persona.get("id_padre"),
+                    "nombre_padre": persona.get("nombre_padre"),
+                    "id_madre": persona.get("id_madre"),
+                    "nombre_madre": persona.get("nombre_madre")
+                })
+
+        # Si no hay resultados
+        return jsonify({"existe": False})
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
+
 
 @registromatrimonios_bp.route("/registrar_persona", methods=["POST"])
 def registrar_persona():

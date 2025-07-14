@@ -1,0 +1,92 @@
+<style>
+  /* Estilos del navbar tipo Gosu */
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  nav {
+    background: linear-gradient(90deg, #1c1c1c, #2c2c2c);
+    color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+  }
+
+  nav .navbar-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .navbar-title {
+    font-size: 1.6em;
+    font-weight: bold;
+    color: #f1c40f;
+    text-shadow: 1px 1px 3px #000;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+  }
+
+  nav li {
+    margin: 0 15px;
+  }
+
+  nav a {
+    color: #ecf0f1;
+    text-decoration: none;
+    font-weight: bold;
+    transition: 0.3s;
+  }
+
+  nav a:hover {
+    color: #f39c12;
+  }
+
+  /* Responsive para móviles */
+  @media (max-width: 768px) {
+    nav ul {
+      flex-direction: column;
+      width: 100%;
+      display: none;
+      background-color: #1e1e1e;
+      margin-top: 10px;
+    }
+
+    nav ul.show {
+      display: flex;
+    }
+
+    .menu-toggle {
+      display: block;
+      cursor: pointer;
+      font-size: 1.2em;
+      color: #f1c40f;
+    }
+  }
+
+  .menu-toggle {
+    display: none;
+  }
+</style>
+
+<nav>
+  <div class="navbar-container">
+    <div class="navbar-title">Parroquia Santo Domingo de Guzmán</div>
+    <div class="menu-toggle" onclick="document.querySelector('nav ul').classList.toggle('show')">☰</div>
+    <ul>
+      <li><a href="/misas_por_fecha">Misas</a></li>
+      <li><a href="/registrar_matrimonios">Registrar Matrimonio</a></li>
+      <li><a href="sacramentos.html">Sacramentos</a></li>
+      <li><a href="misas.html">Misas</a></li>
+      <li><a href="reportes.html">Reportes</a></li>
+      <li><a href="logout.html">Salir</a></li>
+    </ul>
+  </div>
+</nav>
