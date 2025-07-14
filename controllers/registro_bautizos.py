@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, render_template, request, session, redirect, url_for
 from config.db import get_connection
+
 from datetime import datetime
 import logging
 
@@ -63,10 +64,12 @@ def registrar_bautizo():
                 else:
                     mensaje = "✅ Bautizo registrado exitosamente"
             
+
             conn.commit()
             
             if request.headers.get("X-Requested-With") == "XMLHttpRequest":
                 return jsonify({"mensaje": mensaje})
+
                 
         except Exception as e:
             mensaje = f"❌ Error al registrar bautizo: {str(e)}"
@@ -188,5 +191,6 @@ def bautizos_por_fecha():
     finally:
         if cursor: cursor.close()
         if conn: conn.close()
+
 
 

@@ -87,7 +87,6 @@ def registrar_misas():
             hora_misa = request.form["hora_misa"]
             logging.basicConfig(level=logging.DEBUG)
             logging.debug(f"HORA MISA: {hora_misa}")
-            print("HORA MISA: ",hora_misa)
             ofrece = request.form["ofrece"]
             detalle = request.form["detalle"]
             id_iglesia = int(request.form["idiglesias"])
@@ -100,6 +99,21 @@ def registrar_misas():
             contribuyente = request.form["contribuyente"] if registrar_recibo else None
             monto = request.form["monto"] if registrar_recibo else None
             monto = float(monto) if monto else 0.0
+            
+            # Imprimir los datos
+            print(f"Fecha de la misa: {fecha_misa}")
+            print(f"Hora de la misa: {hora_misa}")
+            print(f"Ofrece: {ofrece}")
+            print(f"Detalle: {detalle}")
+            print(f"ID de la iglesia: {id_iglesia}")
+            print(f"ID del tipo de misa: {id_tipo_misa}")
+            print(f"ID de la intención de misa: {id_intencion}")
+
+            if registrar_recibo:
+                print("Datos del recibo:")
+                print(f"Número de recibo: {nro_recibo}")
+                print(f"Contribuyente: {contribuyente}")
+                print(f"Monto: {monto}")
 
             conn = get_connection()
             cursor = conn.cursor(dictionary=True)

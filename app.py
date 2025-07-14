@@ -2,9 +2,16 @@ from flask import Flask, redirect, url_for
 from flask_cors import CORS
 from flask import session
 
+from babel.dates import format_date
+from datetime import datetime
+import locale
+
+
 from config.db import verificar_base_datos_rostros
 from controllers.registro_misas import registromisas_bp
-from controllers.registro_bautizos import registro_bautizos_bp
+
+from controllers.registro_bautizos import registrobautizos_bp
+from controllers.registro_matrimonios import registromatrimonios_bp
 
 
 app = Flask(__name__)
@@ -15,7 +22,13 @@ def inject_user():
     return dict(user=session.get('usuario'))
 # Registrar blueprints
 app.register_blueprint(registromisas_bp)
-app.register_blueprint(registro_bautizos_bp)
+
+app.register_blueprint(registrobautizos_bp)
+app.register_blueprint(registromatrimonios_bp)
+
+@app.template_filter('formatear_fecha_es')
+def formatear_fecha_es(fecha):
+    return format_date(fecha, format='full', locale='es_ES')
 
 #----
 

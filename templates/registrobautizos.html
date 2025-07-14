@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Bautizo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 6px;
+            margin-top: 4px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            width: 400px;
+            margin: 100px auto;
+            border-radius: 10px;
+        }
+
+        .modal-header {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .close {
+            float: right;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Formulario de Registro de Bautizo</h2>
+
+    <form id="formBautizo">
+
+        <!-- Persona que se bautiza -->
+        <label for="dniPersona">DNI del Bautizado</label>
+        <input type="text" id="dniPersona" name="dniPersona" placeholder="Ingrese DNI y presione Enter" required>
+
+        <!-- Padre -->
+        <label for="dniPadre">DNI del Padre</label>
+        <input type="text" id="dniPadre" name="dniPadre" placeholder="Ingrese DNI y presione Enter">
+
+        <!-- Madre -->
+        <label for="dniMadre">DNI de la Madre</label>
+        <input type="text" id="dniMadre" name="dniMadre" placeholder="Ingrese DNI y presione Enter">
+
+        <!-- Padrino -->
+        <label for="dniPadrino">DNI del Padrino</label>
+        <input type="text" id="dniPadrino" name="dniPadrino" placeholder="Ingrese DNI y presione Enter">
+
+        <!-- Madrina -->
+        <label for="dniMadrina">DNI de la Madrina</label>
+        <input type="text" id="dniMadrina" name="dniMadrina" placeholder="Ingrese DNI y presione Enter">
+
+        <!-- Número de partida -->
+        <label for="partida">Número de Partida</label>
+        <input type="text" id="partida" name="partida" required>
+
+        <!-- Fecha del bautizo -->
+        <label for="fechaBautizo">Fecha del Bautizo</label>
+        <input type="date" id="fechaBautizo" name="fechaBautizo" required>
+
+        <!-- Iglesia -->
+        <label for="iglesia">Iglesia</label>
+        <select id="iglesia" name="iglesia" required>
+            <option value="">Seleccione Iglesia</option>
+            {% for iglesia in iglesias %}
+            <option value="{{ iglesia.idiglesias }}">{{ iglesia.nomIglesia }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Nombre iglesia -->
+        <label for="añoparroquial">Nombre del Año Parroquial</label>
+        <select id="añoparroquial" name="añoparroquial" required>
+            <option value="">Seleccione</option>
+
+            {% for añoparr in añosparr %}
+            <option value="{{ añoparr.idAniosParroquial }}">{{ añoparr.nomAnioParroquial }}</option>
+            {% endfor %}
+        </select>
+
+        <!-- Sacerdote -->
+        <label for="sacerdote">Sacerdote</label>
+        <select id="sacerdote" name="sacerdote" required>
+            <option value="">Seleccione Sacerdote</option>
+            {% for sacerdote in sacerdotes %}
+            <option value="{{ sacerdote.idsacerdotes }}">{{ sacerdote.nom }}</option>
+            {% endfor %}
+        </select>
+
+        <br><br>
+        <button type="submit">Registrar Bautizo</button>
+    </form>
+
+    <!-- Modal para registrar nueva persona -->
+    <div id="modalPersona" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="cerrarModal()">&times;</span>
+                Registrar Nueva Persona
+            </div>
+            <label for="dniNuevo">DNI</label>
+            <input type="text" id="dniNuevo">
+
+            <label for="nombres">Nombres</label>
+            <input type="text" id="nombres">
+
+            <label for="apellido1">Apellido Paterno</label>
+            <input type="text" id="apellido1">
+
+            <label for="apellido2">Apellido Materno</label>
+            <input type="text" id="apellido2">
+
+            <label for="genero">Género</label>
+            <select id="genero">
+                <option value="">Seleccione</option>
+                <option value="M">Masculino</option>
+                <option value="F">Femenino</option>
+            </select>
+
+            <br><br>
+            <button type="button" onclick="guardarPersona()">Guardar Persona</button>
+        </div>
+    </div>
+
+    <script>
+        // Simulación de búsqueda por DNI (a reemplazar con llamada a backend)
+        function buscarPersona(dni) {
+            // Aquí puedes reemplazar por un fetch() real al backend
+            const personasRegistradas = ['12345678', '87654321', '11223344'];
+            return personasRegistradas.includes(dni);
+        }
+
+        // Evento ENTER en los campos de DNI
+        document.querySelectorAll('input[type="text"]').forEach(input => {
+            input.addEventListener('keydown', function (e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (!buscarPersona(this.value)) {
+                        abrirModal(this.id);
+                    } else {
+                        alert("Persona encontrada y cargada (simulado)");
+                        // Aquí deberías rellenar los campos con datos desde la BD
+                    }
+                }
+            });
+        });
+
+        let campoOrigen = null;
+
+        function abrirModal(origen) {
+            campoOrigen = origen;
+            document.getElementById('modalPersona').style.display = 'block';
+            document.getElementById('dniNuevo').value = document.getElementById(origen).value;
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalPersona').style.display = 'none';
+            document.getElementById('modalPersona').querySelectorAll('input, select').forEach(el => el.value = '');
+        }
+
+        function guardarPersona() {
+            const dni = document.getElementById('dniNuevo').value;
+            const nombre = document.getElementById('nombres').value;
+            // Aquí deberías guardar en la base de datos vía backend
+            alert("Persona registrada (simulado)");
+            document.getElementById(campoOrigen).value = dni;
+            cerrarModal();
+        }
+    </script>
+
+</body>
+
+</html>
