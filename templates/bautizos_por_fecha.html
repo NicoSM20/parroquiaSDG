@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Listado de Bautizos</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-4">
+    <h2 class="mb-4">Listado de Bautizos</h2>
+
+    {% if error %}
+    <div class="alert alert-danger">{{ error }}</div>
+    {% endif %}
+
+    {% if bautizos %}
+        <div class="mb-3">
+            <input class="form-control" id="buscador" type="text" placeholder="Buscar por DNI, nombre, partida o fecha ...">
+        </div>
+
+        <table class="table table-striped table-bordered">
+            <thead class="table-light">
+                <tr>
+                    <th>DNI</th>
+                    <th>Nombre Bautizado</th>
+                    <th>Partida</th>
+                    <th>Fecha</th>
+                    <th>Iglesia</th>
+                    <th>Sacerdote</th>
+                    <th>Año Parroquial</th>
+                </tr>
+            </thead>
+            <tbody id="tablaBautizos">
+                {% for b in bautizos %}
+                <tr>
+                    <td>{{ b.dni_bautizado }}</td>
+                    <td>{{ b.bautizado }}</td>
+                    <td>{{ b.nroPartidaBautizo }}</td>
+                    <td>{{ b.fechaBautizo }}</td>
+                    <td>{{ b.nomIglesia }}</td>
+                    <td>{{ b.sacerdote }}</td>
+                    <td>{{ b.nomAnioParroquial }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="alert alert-info">No se encontraron registros de bautizos.</div>
+    {% endif %}
+
+    <script>
+        const buscador = document.getElementById("buscador");
+        const filas = document.querySelectorAll("#tablaBautizos tr");
+
+        buscador.addEventListener("keyup", () => {
+            const texto = buscador.value.toLowerCase();
+            filas.forEach(fila => {
+                const contenido = fila.textContent.toLowerCase();
+                fila.style.display = contenido.includes(texto) ? "" : "none";
+            });
+        });
+    </script>
+</body>
+</html>
